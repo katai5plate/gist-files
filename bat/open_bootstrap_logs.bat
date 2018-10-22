@@ -1,0 +1,1 @@
+eventvwr /f:"<QueryList><Query Id='0' Path='System'><Select Path='System'>*[System[(EventID=6005 or EventID=6006 or EventID=6008 or EventID=6009 or EventID=42 or EventID=1 or EventID=12 or EventID=13)]]</Select></Query></QueryList>"
