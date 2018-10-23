@@ -1,0 +1,43 @@
+// 参考: https://github.com/katai5plate/gist-files/blob/master/csv/rpg2000-battle-anim.csv
+
+#include "obaq.as"
+screen 0, 320, 240 : qreset
+
+// define objects
+qaddpoly obj(0),16,  40,30,,  4,4
+qaddpoly obj(1),16,  10,20,,  4,4
+qaddpoly obj(2),16,  35,10,,  4,4
+
+// define output
+res = "ﾌﾚｰﾑID\t"
+lab = "ﾊﾟﾀｰﾝID\t座標x\t座標y\t拡大率\tR\tG\tB\tS\t透明度\t"
+for i,0,length(obj),1
+  res += lab
+next : res += "\n"
+
+// main
+for count,1,200,1
+
+  // add force
+  qblast 40, 60, 0.7
+  
+  // draw
+  redraw 0 : color : boxf
+    qexec : qdraw
+  redraw
+  
+  // get data
+  res += "" + count + "\t"
+  for i,0,length(obj),1
+    qgetpos i, x, y, _
+    x -= int(320/8)
+    y -= int(240/8)
+    res += strf("%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t", 1, x, y, 100,100,100,100,100,0)
+  next : res += "\n"
+
+await 1 : next
+
+// export result
+notesel res : notesave "out.txt"
+
+end
