@@ -1,3 +1,4 @@
+// RPGアツマールのランキングに乗ってるゲームのIDを全部取得
 (()=>{
     const b = document.body;
     const t = b.getElementsByClassName("thumbnail");
