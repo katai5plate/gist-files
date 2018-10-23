@@ -1,4 +1,4 @@
-rem= "起動処理"; /* aviutl.iniと同じフォルダに置いて実行することで推奨設定にしてくれる。要nodejs
+rem= "aviutl.iniと同じフォルダに置いて実行することで推奨設定にしてくれる。要nodejs"; /*
 
 node %~0 %*
 pause
