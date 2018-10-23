@@ -1,5 +1,8 @@
 rem= ""; /* 
 
+: echoモード設定
+@echo off
+
 : Node.jsの有無を確認
 where /q node || exit
 
