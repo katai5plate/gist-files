@@ -15,6 +15,8 @@
 //   });
 // }
 
+// {"args":[{"condition":1,"conditionValue":1,"files":["Attack3","Battle1","Damage4"],"volumeMin":0,"volumeMax":1,"pitchMin":0,"pitchMax":1,"panMin":0,"panMax":1,"priority":1},{"condition":1,"conditionValue":2,"files":["Collapse4"],"volumeMin":1,"volumeMax":1,"pitchMin":1,"pitchMax":1,"panMin":1,"panMax":1,"priority":2}]}
+
 /*:
  * @plugindesc 足音
  * @param args
