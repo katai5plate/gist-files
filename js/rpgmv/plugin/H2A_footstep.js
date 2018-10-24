@@ -86,7 +86,7 @@ let H2A_footstep = {};
   const randRange = (a, z) => Math.random() * (z - a) + a;
 
   H2A_footstep = {
-    params: { ...params },
+    params: { ...params.args },
     prevStep: Number.NaN,
     update: function() {
       if (this.params.length === 0) return;
