@@ -25,7 +25,7 @@
  * @param duration
  * @type number
  * @min 1
- * @default 10
+ * @default 1
  * 
  * @param callbackEventID
  * @type note
