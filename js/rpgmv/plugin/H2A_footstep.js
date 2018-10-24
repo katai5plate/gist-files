@@ -8,12 +8,10 @@
  */
 /*~struct~arg:
  * @param condition
- * @type select
- * @option regionId
- * @value "r"
+ * @type combo
  * @option terrainTag
- * @value "t"
- * @default "r"
+ * @option regionId
+ * @default terrainTag
  * 
  * @param conditionValue
  * @type number
@@ -40,13 +38,13 @@
  * @type number
  * @min 50
  * @max 150
- * @default 50
+ * @default 100
  * 
  * @param pitchMax
  * @type number
  * @min 50
  * @max 150
- * @default 50
+ * @default 100
  * 
  * @param panMin
  * @type number
@@ -87,9 +85,9 @@ let H2A_footstep = {};
   const randRange = (a, z) => Math.random() * (z - a) + a;
 
   H2A_footstep = {
-    params: { ...params.args },
+    params: [...params.args],
     prevStep: Number.NaN,
-    update: function() {
+    update: function () {
       if (this.params.length === 0) return;
       if ($gameParty.steps() !== this.prevStep) {
         this.prevStep = $gameParty.steps();
@@ -107,11 +105,11 @@ let H2A_footstep = {};
             priority
           } = item;
           const cond =
-            (condition === "r"
-              ? $gameMap.regionId($gamePlayer.x, $gamePlayer.y)
-              : condition === "t"
-                ? $gameMap.terrainTag($gamePlayer.x, $gamePlayer.y)
-                : Number.NaN) === conditionValue;
+            (condition === "regionId" ?
+              $gameMap.regionId($gamePlayer.x, $gamePlayer.y) :
+              condition === "terrainTag" ?
+              $gameMap.terrainTag($gamePlayer.x, $gamePlayer.y) :
+              Number.NaN) === conditionValue;
           if (cond) {
             if (this.params.length === 1 || Math.random() * 100 < priority) {
               AudioManager.playSe({
