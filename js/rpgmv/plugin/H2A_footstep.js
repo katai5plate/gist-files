@@ -62,7 +62,7 @@
  * 
  * @param priority
  * @type number
- * @dsec rand:100 < X  (If only 1 then, 100%)
+ * @desc rand:100 < X  (If only 1 then, 100%)
  * @default 100
  */
 
