@@ -1,0 +1,4 @@
+/*:
+ * @param files
+ * @type file[]
+ */
