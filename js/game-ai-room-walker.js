@@ -6,7 +6,8 @@
         /*06*/[7, 9], /*07*/[6, 10],      /*08*/[5],
         /*09*/[6],    /*10*/[7],          /*11*/[],
     ];
-    let index = 1, history = [];
+    // 初期位置
+    let index = 1, history = [index];
     // 彷徨い開始
     for (let i = 0; i < 20; i++) {
         const pindex = index;
