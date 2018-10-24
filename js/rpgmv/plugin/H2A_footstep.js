@@ -15,7 +15,7 @@
 //   });
 // }
 
-/* 
+/*:
  * @plugindesc 足音
  * @param args
  * @type struct<arg>[]
