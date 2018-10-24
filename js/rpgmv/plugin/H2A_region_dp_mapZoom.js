@@ -8,7 +8,7 @@
  * @help
  * マップ画面拡大縮小プラグイン
  * https://github.com/drowsepost/rpgmaker-mv-plugins
- * をリージョンIDを踏んだときをトリガーに設定する
+ * 適用時に特定のリージョンIDを踏んだとき拡大率を変更できるようにする
  * 
  * 並列処理で H2A_region_dp_mapZoom.update()
  */
