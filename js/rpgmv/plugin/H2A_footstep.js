@@ -1,4 +1,4 @@
-/* 
+/*:
  * @plugindesc 足音
  * @param args
  * @type struct<arg>[]
@@ -22,6 +22,7 @@
  * @param files
  * @type file[]
  * @dir audio/se
+ * @require 1
  * 
  * @param volumeMin
  * @type number
