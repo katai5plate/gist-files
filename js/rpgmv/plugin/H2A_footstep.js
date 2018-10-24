@@ -90,7 +90,7 @@ let H2A_footstep = {};
     prevStep: Number.NaN,
     update: function() {
       if (this.params.length === 0) return;
-      if ($gameParty.steps() != this.prevStep) {
+      if ($gameParty.steps() !== this.prevStep) {
         this.prevStep = $gameParty.steps();
         this.params.forEach(item => {
           const {
