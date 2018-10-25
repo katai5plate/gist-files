@@ -3,7 +3,7 @@
  * 
  * @param list
  * @type struct<arg>[]
- * @default ["{\"regionId\":\"0\",\"zoom\":\"1\",\"duration\":\"0\",\"callbackEventID\":\"\\\"() => null\\\"\"}"]
+ * @default ["{\"regionId\":\"0\",\"zoom\":\"1\",\"duration\":\"0\",\"callbackEventID\":\"\\\"-1\\\"\"}"]
  * 
  * @help
  * マップ画面拡大縮小プラグイン
