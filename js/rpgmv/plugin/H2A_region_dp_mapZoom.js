@@ -1,5 +1,6 @@
 /*:
  * @plugindesc DP_MapZoom.jsをリージョンIDと同期
+ * @author Had2App
  * 
  * @param list
  * @type struct<arg>[]
@@ -18,6 +19,9 @@
  * if文などを使用したい場合は、
  * (()=>{...})() または (function(){...})() のようにメソッドを記述して、
  * -1以上の数値 または ゲームイベントオブジェクトを返すものにしてください
+ * 
+ * ・LICENCES
+ * Do What The F*ck You Want To Public License
  */
 /*~struct~arg:
  * @param regionId
