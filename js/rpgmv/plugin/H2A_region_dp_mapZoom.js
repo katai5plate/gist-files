@@ -42,15 +42,7 @@ let H2A_region_dp_mapZoom = {};
   const pluginName = "H2A_region_dp_mapZoom";
   const params = JSON.parse(
     JSON.stringify(PluginManager.parameters(pluginName), (k, v) => {
-      try {
-        return JSON.parse(v);
-      } catch (k) {
-        try {
-          return eval(v);
-        } catch (k) {
-          return v;
-        }
-      }
+      try { return JSON.parse(v); } catch (k) { try { return eval(v); } catch (k) { return v; } }
     })
   );
   H2A_region_dp_mapZoom = {
