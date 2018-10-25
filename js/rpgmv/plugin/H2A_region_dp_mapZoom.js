@@ -10,9 +10,12 @@
  * https://github.com/drowsepost/rpgmaker-mv-plugins
  * 適用時に特定のリージョンIDを踏んだとき拡大率を変更できるようにする
  * 
- * 並列処理で H2A_region_dp_mapZoom.update()
+ * ・使用法
+ * 並列処理イベントで常に H2A_region_dp_mapZoom.update() をスクリプト実行することで
+ * プラグインの恩恵を得ることができます。
  * 
- * callbackEventID でif文などを使用したい場合は、
+ * ・callbackEventID について
+ * if文などを使用したい場合は、
  * (()=>{...})() または (function(){...})() のようにメソッドを記述して、
  * -1以上の数値 または ゲームイベントオブジェクトを返すものにしてください
  */
