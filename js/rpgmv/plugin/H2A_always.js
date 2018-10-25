@@ -4,8 +4,8 @@
  * @type note
  * @default "(()=>{\n\/* process *\/\n})()"
  */
-const { update } = $gameMap;
-$gameMap.update = function () {
+const { update } = Game_Map.prototype;
+Game_Map.prototype.update = function () {
   update.apply(this);
-  eval(PluginManager._parameters.H2A_always.script);
+  eval(JSON.parse(PluginManager.parameters("H2A_Always").script));
 }
