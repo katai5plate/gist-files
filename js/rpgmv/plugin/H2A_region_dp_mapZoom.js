@@ -34,7 +34,7 @@
  * @param callbackEventID
  * @type note
  * @default "-1"
- * @desc 最終的な答えをイベントIDの数値にする。-1の場合は主人公
+ * @desc スクリプト記述。最終的な答えをイベントIDの数値にする。-1の場合は主人公
  */
 
 let H2A_region_dp_mapZoom = {};
