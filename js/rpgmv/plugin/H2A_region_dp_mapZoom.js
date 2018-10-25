@@ -53,11 +53,11 @@ let H2A_region_dp_mapZoom = {};
     })
   );
   H2A_region_dp_mapZoom = {
-    list: [...params.list],
+    list: [...params.list || []],
     prevStep: Number.NaN,
     zoom: drowsepost.camera.zoom,
     update: function () {
-      if ($gameParty.steps() !== this.prevStep) {
+      if ($gameParty.steps() !== this.prevStep || this.list.length !== 0) {
         this.prevStep = $gameParty.steps();
         const rid = $gameMap.regionId($gamePlayer.x, $gamePlayer.y);
         this.list.filter(v => v.regionId === rid).forEach(v => {
