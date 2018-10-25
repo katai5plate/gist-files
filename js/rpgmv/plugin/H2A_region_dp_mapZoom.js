@@ -11,6 +11,10 @@
  * 適用時に特定のリージョンIDを踏んだとき拡大率を変更できるようにする
  * 
  * 並列処理で H2A_region_dp_mapZoom.update()
+ * 
+ * callbackEventID でif文などを使用したい場合は、
+ * (()=>{...})() または (function(){...})() のようにメソッドを記述して、
+ * null または 数値 または ゲームイベントオブジェクトを返すものにしてください
  */
 /*~struct~arg:
  * @param regionId
