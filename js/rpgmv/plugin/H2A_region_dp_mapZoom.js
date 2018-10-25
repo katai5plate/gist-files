@@ -54,7 +54,7 @@ let H2A_region_dp_mapZoom = {};
         this.prevStep = $gameParty.steps();
         const rid = $gameMap.regionId($gamePlayer.x, $gamePlayer.y);
         this.list.filter(v => v.regionId === rid).forEach(v => {
-          drowsepost.camera.zoom(v.zoom, v.duration, eval(v.callbackEventID));
+          drowsepost.camera.zoom(v.zoom, v.duration, v.callbackEventID);
         })
       }
     }
