@@ -12,6 +12,7 @@ const H2A_SERIAL_PRELOAD_PICTURE_LIST = [];
  * プラグインソース最上部で指定したサウンドとピクチャ素材名を、
  * 任意のタイミングで一括ロードを行う。
  * 多用すると大量のパケット消費に繋がるので注意。
+ * H2A_SERIAL_PRELOAD_*****_LISTに入れる文字列に拡張子はいらない。
  *
  * 【使い方】
  * ◆スクリプト：(async()=>await H2A_SERIAL_PRELOAD_START())()
