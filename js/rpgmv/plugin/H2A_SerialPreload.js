@@ -7,7 +7,7 @@ const H2A_SERIAL_PRELOAD_PICTURE_LIST = [];
 
 /*:
  * @plugindesc 直列プリロード
- * 
+ * @author Had2App
  * @help
  * 【使い方】
  * ◆スクリプト：(async()=>await H2A_SERIAL_PRELOAD_START())()
@@ -19,6 +19,9 @@ const H2A_SERIAL_PRELOAD_PICTURE_LIST = [];
  * 　◆ウェイト：1フレーム
  * 　◆
  * ◆文章：プリロード完了
+ *
+ * 【ライセンス】
+ * Do What The Fuck You Want To Public License
  */
 
 let H2A_SERIAL_PRELOAD_OK = false;
