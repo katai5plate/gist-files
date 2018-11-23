@@ -10,7 +10,7 @@ const H2A_SERIAL_PRELOAD_PICTURE_LIST = [];
  * 
  * @help
  * 【使い方】
- * ◆スクリプト：(async ()=>await H2A_SERIAL_PRELOAD_START())()
+ * ◆スクリプト：(async()=>await H2A_SERIAL_PRELOAD_START())()
  * ◆ループ
  * 　◆条件分岐：スクリプト：H2A_SERIAL_PRELOAD_OK
  * 　　◆ループの中断
