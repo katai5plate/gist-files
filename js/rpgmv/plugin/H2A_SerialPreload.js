@@ -1,3 +1,4 @@
+// ここに素材のリストを書く。
 const H2A_OLD_PRELOAD_BGM_LIST = [];
 const H2A_OLD_PRELOAD_BGS_LIST = [];
 const H2A_OLD_PRELOAD_ME_LIST = [];
