@@ -5,11 +5,7 @@ const $$$_PRELOAD_SE_LIST = [];
 const $$$_PRELOAD_PICTURE_LIST = [];
 
 (async () => {
-  const sound_opt = {
-    volume: 0,
-    pitch: 1e2,
-    pan: 0
-  };
+  const sound_opt = {volume: 0, pitch: 1e2, pan: 0};
   const pic_opt = [0, 0, 0, 100, 100, 0, 0];
   const bgmp = () => new Promise(r => {
     const t = setInterval(() => {
@@ -31,9 +27,10 @@ const $$$_PRELOAD_PICTURE_LIST = [];
       if (AudioManager._seBuffers && AudioManager._seBuffers.length !== 0) r(!0), clearInterval(t);
     }, 1);
   });
-  const picp = () => new Promise(r => {
+  const picp = name => new Promise(r => {
+    const n = `img/pictures/${name}.png:0`;
     const t = setInterval(() => {
-      if ($gameScreen.picture(1) !== null) r(!0), clearInterval(t);
+      if (ImageManager._imageCache._items.hasOwnProperty(n) && ImageManager._imageCache._items[n].bitmap.isReady()) r(!0), clearInterval(t);
     }, 1);
   });
 
@@ -95,7 +92,7 @@ const $$$_PRELOAD_PICTURE_LIST = [];
   for (let name of $$$_PRELOAD_PICTURE_LIST) {
     console.log(`PICTURE_PRELOAD-LOAD: ${name}`);
     $gameScreen.showPicture(1, name, ...pic_opt);
-    await picp();
+    await picp(name);
     $gameScreen.erasePicture(1);
     console.log(`PICTURE_PRELOAD-OK: ${name}`);
   }
