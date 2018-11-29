@@ -1,4 +1,4 @@
-screen 0,320,240:repeat:redraw 0:color:boxf:gosub *main:redraw 1:await:loop:*main
+screen:repeat:redraw 0:color:boxf:gosub *main:redraw:await:loop:*main
 
   color 255:line 0,0,mousex,mousey
 
