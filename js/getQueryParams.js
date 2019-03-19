@@ -1,4 +1,4 @@
-const getQueryParams = () =>
+var getQueryParams = () =>
   window
     .location
     .search
