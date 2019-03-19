@@ -1,5 +1,1 @@
-var fetchFile = async url =>
-  await (await fetch(url))
-    .body
-    .getReader()
-    .read();
+var fetchText = async url => await (await fetch(url)).text();
