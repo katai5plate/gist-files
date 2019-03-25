@@ -3,7 +3,7 @@
  * @author Had2Apps (forked: https://github.com/timoxley/keycode)
  *
  * @help
- * バージョン 1.0.2
+ * バージョン 1.0.3
  * 
  * MITライセンス
  * コードの一部は、https://github.com/timoxley/keycode をforkしています。
@@ -3132,7 +3132,7 @@
     }
   }, {});
 
-  if (params.APPEND_MODE === true) {
+  if (params.APPEND_MODE === "true") {
     Input.keyMapper = { ...Input.keyMapper, ...mapper }
   } else {
     Input.keyMapper = mapper;
