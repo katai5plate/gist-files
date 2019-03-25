@@ -3,7 +3,7 @@
  * @author Had2Apps (forked: https://github.com/timoxley/keycode)
  *
  * @help
- * バージョン 1.0.3
+ * バージョン 1.1.0
  * 
  * MITライセンス
  * コードの一部は、https://github.com/timoxley/keycode をforkしています。
@@ -15,6 +15,14 @@
  * @on ON
  * @off OFF
  * @default true
+ * 
+ * @param TYPING_MODE
+ * @desc none にしたキーの設定値をパラメータ名に変更します。
+ * 例: Input.isTriggered("Numpad +")
+ * @type boolean
+ * @on ON
+ * @off OFF
+ * @default false
  * 
  * @param 0
  * @type select
@@ -3128,7 +3136,11 @@
     const key = params[c.key];
     return {
       ...p,
-      ...(key === "none" ? {} : { [c.value]: key }),
+      ...(
+        key === "none"
+          ? {}
+          : { [c.value]: key }
+      ),
     }
   }, {});
 
@@ -3136,5 +3148,11 @@
     Input.keyMapper = { ...Input.keyMapper, ...mapper }
   } else {
     Input.keyMapper = mapper;
+  }
+  if (params.TYPING_MODE === "true") {
+    const typingMapper = keycode
+      .filter(code => !Object.keys(Input.keyMapper).includes(`${code.value}`))
+      .reduce((p, c) => ({ ...p, [c.value]: c.key }), {});
+    Input.keyMapper = { ...Input.keyMapper, ...typingMapper };
   }
 })()
