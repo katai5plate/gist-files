@@ -25,7 +25,7 @@ const onload = () => {
         type: "",
         key: ""
       },
-      $getPad: (x) => ({ down: false, up: false }),
+      $getPad: (x) => ({ isDown: false, isUp: false }),
       controllers: {
         defaultController: {
           subscribe: () => null
@@ -35,9 +35,9 @@ const onload = () => {
   }
   window.RPGAtsumaru.$input = { type: "", key: "" }
   window.RPGAtsumaru.$getPad = (key: RPGAPadKey) => ({
-    down: window.RPGAtsumaru.$input.type === "keydown" &&
+    isDown: window.RPGAtsumaru.$input.type === "keydown" &&
       window.RPGAtsumaru.$input.key === key,
-    up: window.RPGAtsumaru.$input.type === "keyup" &&
+    isUp: window.RPGAtsumaru.$input.type === "keyup" &&
       window.RPGAtsumaru.$input.key === key
   })
   if (window.RPGAtsumaru.controllers) {
@@ -50,3 +50,5 @@ const onload = () => {
 };
 
 export default onload;
+
+// example: window.RPGAtsumaru.$getPad('left').isDown
