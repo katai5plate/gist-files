@@ -2,6 +2,10 @@
  * @plugindesc レイヤーごとにグレースケールを適用する
  * @author Had2Apps
  * @help
+ * 注意：
+ * 毎フレーム実行で使用するのを推奨します。
+ * 場所移動やメニュー開閉でグレー化が解除されるので。
+ *
  * 全部グレーにする: $h2aWhySo.gray(L)
  * 解除: $h2aWhySo.fine()
  *
@@ -109,10 +113,10 @@
     _createTilemap.call(this);
     /* 内部データを書き換えないので既存部を上書きしない */
     window.$tilemap = this._tilemap; // 追記。グローバル化
-    window.$h2aWhySo = new WhySoGray(); // 追記。プラグイン実行関数の定義
+    window.$h2aWhySo = new H2A_WhySoGray(); // 追記。プラグイン実行関数の定義
   };
 
-  class WhySoGray {
+  class H2A_WhySoGray {
     constructor() {
       // カラーマトリクスの計算
       const x = 1 / 3;
