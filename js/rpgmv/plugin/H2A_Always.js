@@ -1,5 +1,5 @@
 /*:
- * @plugindesc 常に実行
+ * @plugindesc マップ上で常に実行する処理を設定する
  * @param script
  * @type note
  * @default "(()=>{\n\/* process *\/\n})()"
