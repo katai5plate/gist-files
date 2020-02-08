@@ -9,7 +9,13 @@
     2. コマンドプロンプトでゲームプロジェクトのフォルダを開く
     3. 「 yarn add rpgtkoolmv/corescript 」と入力して Enter
     これでエラーなく完了すれば、動くようになります。
-    VSCode で作業する場合は、node_modules を別名にリネームし、パスも置換して使うことをお勧めします。
+    VSCode で作業する場合は、以下の設定を行うことを推奨します。
+    {
+      "search.exclude": {
+        "**/node_modules": false
+      },
+      "search.useIgnoreFiles": false
+    }
 
 -->
 <!DOCTYPE html>
