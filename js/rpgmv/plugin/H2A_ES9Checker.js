@@ -21,7 +21,6 @@
  * - Chrome 80 以上
  * - Edge 80 以上
  * - Opera 66 以上
- * - Safaro 13 以上
  * - iOS Safari 13.2 以上
  * - Android Browser 80 以上
  * - Samsung Internet 10.1 以上
