@@ -1,6 +1,6 @@
 // イベントコマンドをスクリプト化する
 
-const linkToScript = (list, replacer = code => `${code}`.padStart(3, "0")) =>
+const listToScript = (list, replacer = code => `${code}`.padStart(3, "0")) =>
   list
     .map(
       ({ indent, code, parameters }) =>
