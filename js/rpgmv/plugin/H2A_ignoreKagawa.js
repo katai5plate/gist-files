@@ -23,6 +23,10 @@
 
 (function() {
   var ERR_STOP = "プラグイン H2A_ignoreKagawa の動作を停止しました。";
+  var AREA_KAGAWA = {
+    latitude: { min: 34.012309, max: 34.564613 },
+    longitude: { min: 133.446597, max: 134.440574 }
+  };
   var pluginParams = PluginManager._parameters.h2a_ignorekagawa;
   var props = {
     regions: pluginParams.regions
@@ -76,8 +80,16 @@
           err(ERR_STOP, "APIから所定のレスポンスが得られませんでした。");
         })
         .then(function(res) {
-          if (res && res.region) {
+          if (res && res.region && res.latitude && res.longitude) {
             if (props.regions.includes(res.region)) {
+              notice(true);
+            }
+            if (
+              AREA_KAGAWA.latitude.min <= res.latitude &&
+              res.latitude <= AREA_KAGAWA.latitude.max &&
+              AREA_KAGAWA.longitude.min <= res.longitude &&
+              res.longitude <= AREA_KAGAWA.longitude.max
+            ) {
               notice(true);
             }
           } else {
