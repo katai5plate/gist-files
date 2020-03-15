@@ -6,12 +6,12 @@
  *
  * https://ipapi.co/ にアクセスし、香川県のIPかどうかを調べます。
  * オンラインの外部ネットワークが使用できる環境でしか動かないため、
- * オフライン環境やRPGアツマールでは使用できません。
+ * オフライン環境やRPGアツマール等では使用できません。
  *
  * ただし、regions値を [] にすることで、
  * 都道府県に関わらずエラーメッセージを表示するので、
- * ネットワークアクセスが発生しなくなりますので、
- * どうしてもオフラインやRPGアツマールで使用したい場合は、
+ * ネットワークアクセスが発生しなくなります。
+ * なのでどうしてもオフラインやRPGアツマールで使用したい場合は、
  * そのように設定してください。
  *
  * @param regions
@@ -48,11 +48,12 @@
     Graphics.printError(a, b);
     AudioManager.stopAll();
   }
-  function notice() {
+  function notice(isKagawa) {
     err(
-      "本ゲームは香川県在住の方のプレイを制限しております",
+      isKagawa
+        ? "香川県からのアクセスと思われるIPアドレスを検出しました。"
+        : "本ゲームは香川県在住の方のプレイを制限しております",
       [
-        "香川県からのアクセスと思われるIPアドレスを検出しました。",
         "本ゲームは、香川県在住の方のプレイを推奨しておりません。",
         "お客様が条例違反した事による損害については一切保障致しかねますので、",
         "ご理解とご協力をお願いいたします。",
@@ -77,7 +78,7 @@
         .then(function(res) {
           if (res && res.region) {
             if (props.regions.includes(res.region)) {
-              notice();
+              notice(true);
             }
           } else {
             console.log({ res: res });
@@ -92,7 +93,7 @@
     if (window.Graphics && window.SceneManager && window.AudioManager)
       clearInterval(i);
     if (!props.regions || props.regions.length === 0) {
-      return notice();
+      return notice(false);
     }
     check();
   }, 1);
