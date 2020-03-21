@@ -215,13 +215,22 @@ window.run = () => {
             )
         ),
       ...[...new Array($dataMap.width * $dataMap.height).keys()]
-        .map(i => ({ x: i % $dataMap.width, y: (i / $dataMap.width) | 0 }))
-        .filter(
-          v =>
-            $gameMap.terrainTag(v.x, v.y) === 1 ||
-            $gameMap.regionId(v.x, v.y) === 1
-        )
-        .reduce((p, { x, y }) => {
+        .reduce((p, i) => {
+          const x = i % $dataMap.width;
+          const y = (i / $dataMap.width) | 0;
+          const detectWall = (xx, yy) =>
+            $gameMap.terrainTag(xx, yy) === 1 ||
+            $gameMap.regionId(xx, yy) === 1;
+          const [top, left, right, bottom] = [
+            { x: 0, y: -1 },
+            { x: -1, y: 0 },
+            { x: 1, y: 0 },
+            { x: 0, y: 1 }
+          ].map(w => !detectWall(x + w.x, y + w.y));
+          if (!detectWall(x, y)) return p;
+          return [...p, { x, y, top, left, bottom, right }];
+        }, [])
+        .reduce((p, { x, y, top, left, right, bottom }) => {
           const [tx, ty, dx, dy] = [
             -$gameMap._displayX + x,
             -$gameMap._displayY + y,
@@ -230,10 +239,16 @@ window.run = () => {
           ].map(v => v * 48);
           return [
             ...p,
-            new Line(new Vec(tx, ty), new Vec(dx, ty).add(new Vec(1, 1))),
-            new Line(new Vec(tx, ty), new Vec(tx, dy).add(new Vec(1, 1))),
-            new Line(new Vec(dx, dy).add(new Vec(1, 1)), new Vec(dx, ty)),
-            new Line(new Vec(dx, dy).add(new Vec(1, 1)), new Vec(tx, dy))
+            ...[
+              top &&
+                new Line(new Vec(tx, ty), new Vec(dx, ty).add(new Vec(1, 0))),
+              left &&
+                new Line(new Vec(tx, ty), new Vec(tx, dy).add(new Vec(0, 1))),
+              right &&
+                new Line(new Vec(dx, dy).add(new Vec(0, 1)), new Vec(dx, ty)),
+              bottom &&
+                new Line(new Vec(dx, dy).add(new Vec(1, 0)), new Vec(tx, dy))
+            ].filter(Boolean)
           ];
         }, []),
       new Line(new Vec(0, 0), new Vec(width(), 0)),
