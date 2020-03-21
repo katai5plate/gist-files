@@ -200,25 +200,47 @@ class Points {
     ctx.stroke();
   }
 }
-const walls = [
-  ...new Array(50)
-    .fill(0)
-    .map(
-      () =>
-        new Line(
-          new Vec(Math.random() * width(), Math.random() * height()),
-          new Vec(Math.random() * width(), Math.random() * height())
-        )
-    ),
-  new Line(new Vec(0, 0), new Vec(width(), 0)),
-  new Line(new Vec(0, 0), new Vec(0, height())),
-  new Line(new Vec(width(), height()), new Vec(width(), 0)),
-  new Line(new Vec(width(), height()), new Vec(0, height()))
-];
-const points = new Points();
-window.run = () =>
+window.run = () => {
+  const points = new Points();
+  const id = "raycast";
   setInterval(() => {
-    const id = "raycast";
+    const walls = [
+      ...new Array(0)
+        .fill(0)
+        .map(
+          () =>
+            new Line(
+              new Vec(Math.random() * width(), Math.random() * height()),
+              new Vec(Math.random() * width(), Math.random() * height())
+            )
+        ),
+      ...[...new Array($dataMap.width * $dataMap.height).keys()]
+        .map(i => ({ x: i % $dataMap.width, y: (i / $dataMap.width) | 0 }))
+        .filter(
+          v =>
+            $gameMap.terrainTag(v.x, v.y) === 1 ||
+            $gameMap.regionId(v.x, v.y) === 1
+        )
+        .reduce((p, { x, y }) => {
+          const [tx, ty, dx, dy] = [
+            -$gameMap._displayX + x,
+            -$gameMap._displayY + y,
+            -$gameMap._displayX + x + 1,
+            -$gameMap._displayY + y + 1
+          ].map(v => v * 48);
+          return [
+            ...p,
+            new Line(new Vec(tx, ty), new Vec(dx, ty).add(new Vec(1, 1))),
+            new Line(new Vec(tx, ty), new Vec(tx, dy).add(new Vec(1, 1))),
+            new Line(new Vec(dx, dy).add(new Vec(1, 1)), new Vec(dx, ty)),
+            new Line(new Vec(dx, dy).add(new Vec(1, 1)), new Vec(tx, dy))
+          ];
+        }, []),
+      new Line(new Vec(0, 0), new Vec(width(), 0)),
+      new Line(new Vec(0, 0), new Vec(0, height())),
+      new Line(new Vec(width(), height()), new Vec(width(), 0)),
+      new Line(new Vec(width(), height()), new Vec(0, height()))
+    ];
     if (!SceneManager._scene[id]) {
       SceneManager._scene[id] = new Sprite();
       SceneManager._scene[id].bitmap = new Bitmap(width(), height());
@@ -233,13 +255,14 @@ window.run = () =>
     walls.forEach(wall => wall.draw(ctx));
 
     // ポインタ描画
-    ctx.strokeStyle = "white";
-    ctx.beginPath();
-    ctx.arc(mouseX(), mouseY(), 5, 0, 2 * Math.PI);
-    ctx.stroke();
+    // ctx.strokeStyle = "white";
+    // ctx.beginPath();
+    // ctx.arc(mouseX(), mouseY(), 5, 0, 2 * Math.PI);
+    // ctx.stroke();
 
     // レイ描画
-    points.update(new Vec(mouseX(), mouseY()));
+    points.update(new Vec($gamePlayer.screenX(), $gamePlayer.screenY()));
     points.look(walls, true);
     points.draw(ctx);
   }, 10);
+};
