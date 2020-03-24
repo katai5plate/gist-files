@@ -84,7 +84,7 @@ class Line {
   }
   /** @param {CanvasRenderingContext2D} ctx */
   draw(ctx) {
-    ctx.strokeStyle = "white";
+    ctx.strokeStyle = "yellow";
     ctx.beginPath();
     ctx.moveTo(this.a.x, this.a.y);
     ctx.lineTo(this.b.x, this.b.y);
@@ -203,33 +203,42 @@ class Points {
 window.run = () => {
   const points = new Points();
   const id = "raycast";
+  const mapData = [
+    ...new Array($dataMap.width * $dataMap.height).keys()
+  ].reduce((p, i) => {
+    const x = i % $dataMap.width;
+    const y = (i / $dataMap.width) | 0;
+    const detectWall = (xx, yy) =>
+      $gameMap.terrainTag(xx, yy) === 1 || $gameMap.regionId(xx, yy) === 1;
+    const [top, left, right, bottom] = [
+      { x: 0, y: -1 },
+      { x: -1, y: 0 },
+      { x: 1, y: 0 },
+      { x: 0, y: 1 }
+    ].map(w => !detectWall(x + w.x, y + w.y));
+    if (!detectWall(x, y)) return p;
+    return [...p, { x, y, top, left, bottom, right }];
+  }, []);
   setInterval(() => {
     const walls = [
-      ...new Array(0)
-        .fill(0)
-        .map(
-          () =>
-            new Line(
-              new Vec(Math.random() * width(), Math.random() * height()),
-              new Vec(Math.random() * width(), Math.random() * height())
-            )
-        ),
-      ...[...new Array($dataMap.width * $dataMap.height).keys()]
-        .reduce((p, i) => {
-          const x = i % $dataMap.width;
-          const y = (i / $dataMap.width) | 0;
-          const detectWall = (xx, yy) =>
-            $gameMap.terrainTag(xx, yy) === 1 ||
-            $gameMap.regionId(xx, yy) === 1;
-          const [top, left, right, bottom] = [
-            { x: 0, y: -1 },
-            { x: -1, y: 0 },
-            { x: 1, y: 0 },
-            { x: 0, y: 1 }
-          ].map(w => !detectWall(x + w.x, y + w.y));
-          if (!detectWall(x, y)) return p;
-          return [...p, { x, y, top, left, bottom, right }];
-        }, [])
+      // ...new Array(0)
+      //   .fill(0)
+      //   .map(
+      //     () =>
+      //       new Line(
+      //         new Vec(Math.random() * width(), Math.random() * height()),
+      //         new Vec(Math.random() * width(), Math.random() * height())
+      //       )
+      //   ),
+      ...mapData
+        .filter(({ x, y }) => {
+          return (
+            $gameMap._displayX - 1 < x &&
+            x < $gameMap._displayX + width() / 48 &&
+            $gameMap._displayY - 1 < y &&
+            y < $gameMap._displayY + width() / 48
+          );
+        })
         .reduce((p, { x, y, top, left, right, bottom }) => {
           const [tx, ty, dx, dy] = [
             -$gameMap._displayX + x,
