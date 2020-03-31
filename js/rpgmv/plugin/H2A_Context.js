@@ -63,18 +63,18 @@
         // 演算系
         toDeg: x => (x * Math.PI) / 180,
         // スタイル系
-        fill: (r, g, b, a = 255) => {
+        colorFill: (r, g, b, a = 255) => {
           ctx.fillStyle = `rgba(${r},${g},${b},${a / 255})`;
         },
-        stroke: (r, g, b, a = 255) => {
+        colorStroke: (r, g, b, a = 255) => {
           ctx.strokeStyle = `rgba(${r},${g},${b},${a / 255})`;
         },
         strokeWidth: (x = 1) => {
           ctx.lineWidth = x;
         },
         color: (r, g, b, a = 255) => {
-          this.bitmap.context._.fill(r, g, b, a);
-          this.bitmap.context._.stroke(r, g, b, a);
+          this.bitmap.context._.colorFill(r, g, b, a);
+          this.bitmap.context._.colorStroke(r, g, b, a);
         },
         // 図形描画系
         line: (x1, y1, x2, y2) => {
@@ -187,8 +187,8 @@
           ctx.drawImage(image, sx, sy, sw, sh, x, y, sw, sh);
         }
       };
-      this.bitmap.context._.fill(255, 255, 255);
-      this.bitmap.context._.stroke(0, 0, 0);
+      this.bitmap.context._.colorFill(255, 255, 255);
+      this.bitmap.context._.colorStroke(0, 0, 0);
     }
     draw() {
       this.bitmap.clear();
