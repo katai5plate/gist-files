@@ -222,7 +222,7 @@
 // テスト用
 
 // setTimeout(() => {
-//   x = new H2A_Canvas({
+//   x = new H2A_Context({
 //     update: ({ _ }) => {
 //       _.line(_.mouseX(), _.mouseY(), _.pmouseX(), _.pmouseY());
 //       _.rect(0, 0, _.mouseX(), _.mouseY());
