@@ -7,11 +7,16 @@
  * スクリプト記述例
  *
  * const draw = new H2A_Context({
- *   update: ctx => {
+ *   data: {
+ *     value: 0;
+ *   },
+ *   update: (ctx, that) => {
  *     const { _ } = ctx;
+ *     const { data } = that;
  *     _.line(_.mouseX(), _.mouseY(), _.pmouseX(), _.pmouseY());
- *     _.rect(0, 0, _.mouseX(), _.mouseY());
+ *     _.rect(data.value, 0, _.mouseX(), _.mouseY());
  *     _.circle(_.mouseX(), _.mouseY(), 100);
+ *     data.value++;
  *   }
  * });
  * draw.addScene();
@@ -33,9 +38,12 @@
       y = 0,
       w = Graphics._canvas.width,
       h = Graphics._canvas.height,
-      update = () => {}
+      update = () => {},
+      // 内部ユーザー変数定義用
+      data = {}
     }) {
       super();
+      this.data = data;
       this.x = x;
       this.y = y;
       this.bitmap = new Bitmap(w, h);
@@ -193,7 +201,7 @@
     draw() {
       this.bitmap.clear();
       try {
-        this.onUpdate(this.bitmap.context);
+        this.onUpdate(this.bitmap.context, this);
       } catch (e) {
         this.stopLoop();
         SceneManager.catchException(e);
