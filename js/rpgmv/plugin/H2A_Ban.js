@@ -1,4 +1,4 @@
-/*: ja
+/*:
  * @plugindesc 特定のユーザーIDのプレイを抑止する。
  * @author Had2Apps
  * @param ids
