@@ -1,27 +1,42 @@
-/*
-  [[[ 構文テスト内容 ]]]
-  -- ES6 --
-  アロー関数, let/var宣言, for-of/in
-  class構文
-  Unicode
-  分割代入, テンプレートリテラル, 配列/引数のspread, 可変長引数, デフォルト引数, メソッド定義
-  new.target構文
-  yield構文
-  2/8/16進数リテラル
-  -- ES7 --
-  べき乗
-  TypedArray.prototype.includes
-  -- ES8 --
-  async/await
-  末尾カンマ許容
-  -- ES9 --
-  オブジェクトのspread
-  RegExp:先or後読み, UnicodePropEsc, NamedCaptureGroups, /s
-  for-await-of
-  -- ES10 --
-  Well-formed JSON.stringify
-  JSONスーパーセット (MV1.6.2未対応)
-  try-catchエラー省略 (MV1.6.2未対応)
+/*:
+ * @plugindesc ブラウザが ES6 ～ 10 に対応しているかテストする
+ * @author Had2Apps
+ * @help
+ * [[[ 使い方 ]]]
+ * - JavaScript（スクリプト）上から実行してください。
+ * - window.detectES(N) を実行すると、Nに対応したESバージョンの動作テストを行います。
+ * - 正常動作を確認したときは true が返り、そうでないなら警告ログと false が返ります。
+ *
+ * detectES(6) // ES6 をテスト
+ * detectES(7) // ES7 をテスト
+ * detectES(8) // ES8 をテスト
+ * detectES(9) // ES9 をテスト
+ * detectES(10) // ES10 をテスト
+ * detectES() // デフォルト動作として ES10 をテスト
+ *
+ * [[[ 構文テスト内容 ]]]
+ * -- ES6 --
+ * アロー関数, let/var宣言, for-of/in
+ * class構文
+ * Unicode
+ * 分割代入, テンプレートリテラル, 配列/引数のspread, 可変長引数, デフォルト引数, メソッド定義
+ * new.target構文
+ * yield構文
+ * 2/8/16進数リテラル
+ * -- ES7 --
+ * べき乗
+ * TypedArray.prototype.includes
+ * -- ES8 --
+ * async/await
+ * 末尾カンマ許容
+ * -- ES9 --
+ * オブジェクトのspread
+ * RegExp:先or後読み, UnicodePropEsc, NamedCaptureGroups, /s
+ * for-await-of
+ * -- ES10 --
+ * Well-formed JSON.stringify
+ * JSONスーパーセット (MV1.6.2未対応)
+ * try-catchエラー省略 (MV1.6.2未対応)
  */
 
 /**
