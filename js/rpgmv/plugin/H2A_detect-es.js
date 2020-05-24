@@ -16,7 +16,7 @@
  *
  * [[[ 構文テスト内容 ]]]
  * -- ES6 --
- * アロー関数, let/var宣言, for-of/in
+ * アロー関数, let/const宣言, for-of/in
  * class構文
  * Unicode
  * 分割代入, テンプレートリテラル, 配列/引数のspread, 可変長引数, デフォルト引数, メソッド定義
@@ -70,8 +70,8 @@ window.detectES = function (es) {
   var syntaxCode = branch({
     es6: [
       [
-        "アロー関数, let/var宣言, for-of/in",
-        "()=>{var a=[1,2,3];for(let i in a){for(let j of a){}}}",
+        "アロー関数, let/const宣言, for-of/in",
+        "()=>{const a=[1,2,3];for(let i in a){for(let j of a){}}}",
       ],
       ["class構文", "class A{};class B extends A{};"],
       ["Unicode", "var \\u{20BB7}='\\u{20BB7}';var x=/\\u{20BB7}/u;"],
