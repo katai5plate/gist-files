@@ -3,16 +3,17 @@
  * @author Had2Apps
  * @help
  * [[[ 使い方 ]]]
- * - JavaScript（スクリプト）上から実行してください。
- * - window.detectES(N) を実行すると、Nに対応したESバージョンの動作テストを行います。
- * - 正常動作を確認したときは true が返り、そうでないなら警告ログと false が返ります。
+ * - JavaScript（スクリプト）上から実行する。
+ * - window.detectES(N) を実行すると、Nに対応したESバージョンの動作テストを行う。
+ * - 正常動作を確認したときは true が返り、そうでないなら警告ログと false が返る。
  *
- * detectES(6) // ES6 をテスト
- * detectES(7) // ES7 をテスト
- * detectES(8) // ES8 をテスト
- * detectES(9) // ES9 をテスト
- * detectES(10) // ES10 をテスト
- * detectES() // デフォルト動作として ES10 をテスト
+ * detectES(6) // ES6 までテスト
+ * detectES(7) // ES6-7 までテスト
+ * detectES(8) // ES6-8 までテスト
+ * detectES(9) // ES6-9 までテスト
+ * detectES(10) // ES6-10 までテスト
+ * detectES() // デフォルト動作として ES10 までテスト
+ * detectES(8, true) // ES8 "だけ" をテスト
  *
  * [[[ 構文テスト内容 ]]]
  * -- ES6 --
@@ -39,18 +40,19 @@
  * try-catchエラー省略 (MV1.6.2未対応)
  */
 
+try {
+  window = global;
+} catch (e) {}
+
 /**
  * @param {number|undefined} [es=10] 6-10
+ * @param {boolean} [only=false] true にすると指定の ES しか調べない
  */
-window.detectES = function (es) {
+window.detectES = function (es, only) {
   if (typeof es !== "number" && es !== undefined)
     throw "無効な引数: number|undefined";
   if (!(6 <= es && es <= 10) && es !== undefined) throw "無効な引数: 6-10";
   var esVersion = es === undefined ? 10 : es;
-
-  try {
-    window = global;
-  } catch (e) {}
 
   var concatArray = function (a) {
     return a.reduce(function (p, c) {
@@ -58,12 +60,16 @@ window.detectES = function (es) {
     }, []);
   };
   var branch = function (o) {
+    var pick = function (trigger, value) {
+      var cond = only ? esVersion === trigger : esVersion >= trigger;
+      return cond ? value || [] : [];
+    };
     return concatArray([
-      esVersion >= 6 ? o.es6 || [] : [],
-      esVersion >= 7 ? o.es7 || [] : [],
-      esVersion >= 8 ? o.es8 || [] : [],
-      esVersion >= 9 ? o.es9 || [] : [],
-      esVersion >= 10 ? o.es10 || [] : [],
+      pick(6, o.es6),
+      pick(7, o.es7),
+      pick(8, o.es8),
+      pick(9, o.es9),
+      pick(10, o.es10),
     ]);
   };
 
