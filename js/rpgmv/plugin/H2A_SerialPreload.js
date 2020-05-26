@@ -7,7 +7,7 @@ const H2A_SERIAL_PRELOAD_PICTURE_LIST = [];
 
 /*:
  * @plugindesc 直列プリロード
- * @author Had2App
+ * @author Had2Apps
  * @help
  * プラグインソース最上部で指定したサウンドとピクチャ素材名を、
  * 任意のタイミングで一括ロードを行う。
