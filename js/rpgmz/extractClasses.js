@@ -1,4 +1,6 @@
-// require: Node.js, fs-extra
+// 必須: Node.js
+// 1. この js と同ディレクトリにコアスクリプトの入った js/ を置く。
+// 2. コマンド: npm init -y && npm i fs-extra && node extractClasses.js
 
 const fs = require("fs-extra");
 const delimit =
