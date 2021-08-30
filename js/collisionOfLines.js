@@ -75,7 +75,7 @@ const isPointOnLine = (point, line) => {
  * @param {Line} a
  * @param {Line} b
  */
-const isOverlappingLine = (a, b) =>
+const isOverlappingLines = (a, b) =>
   (isPointOnLine(a.f, b) && isPointOnLine(a.t, b)) ||
   (isPointOnLine(b.f, a) && isPointOnLine(b.t, a));
 
@@ -85,4 +85,4 @@ const isOverlappingLine = (a, b) =>
  * @param {Line} b
  */
 const collisionLines = (a, b) =>
-  isCrossingLines(a, b) || isOverlappingLine(a, b);
+  isCrossingLines(a, b) || isOverlappingLines(a, b);
