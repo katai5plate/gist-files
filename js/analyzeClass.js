@@ -6,7 +6,7 @@ var analyzeClass = (C) => {
       ? // ES5 class
         entries
       : // ES6+ class
-        Object.getOwnPropertyNames(C.prototype).map(
+        Object.getOwnPropertyNames(C.prototype || C).map(
           (p) => [p, C.prototype[p]],
           []
         )
