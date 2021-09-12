@@ -1,5 +1,5 @@
 var analyzeClass = (C) => {
-  const entries = Object.entries(C.prototype);
+  const entries = Object.entries(C.prototype || C);
   // 関数リスト
   const functions = (
     entries.length
