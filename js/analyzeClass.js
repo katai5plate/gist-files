@@ -5,25 +5,65 @@
  * @returns {{functions,members,prototypes}} 検出した関数・メンバ変数・継承クラス名
  */
 window.analyzeClass = (C, noCode = false) => {
-  const entries = Object.entries(C.prototype || C);
+  // 継承リスト
+  let { prototype } = C;
+  let prototypes = [];
+  while (prototype) {
+    prototypes = [...prototypes, prototype || ""];
+    prototype = Object.getPrototypeOf(prototype);
+  }
   // 関数リストを作成。まずは現在のクラスで定義されたものを取得。
+  const entries = Object.entries(C.prototype);
+  const staticFunctionsOrValues = ((e) =>
+    e.length
+      ? // ES5 class
+        e
+      : // ES6+ class
+        Object.getOwnPropertyNames(C).map((p) => [p, C[p]], []))(
+    Object.entries(C)
+  );
   const toFunctionData = ([name, fn]) => ({
     name,
     isReadable: !fn?.toString()?.match(/\[native code\]/), // Proxy の場合こうなる
     code: fn?.toString() || "",
     extendedBy: C.name || C.constructor.name,
     isMember: false,
+    isStatic: false,
   });
-  let functions = (
-    entries.length
+  let functions = [
+    ...(entries.length
       ? // ES5 class
         entries
       : // ES6+ class
-        Object.getOwnPropertyNames(C.prototype || C).map(
+        Object.getOwnPropertyNames(C.prototype).map(
           (p) => [p, C.prototype[p]],
           []
         )
-  ).map(toFunctionData);
+    ).map(toFunctionData),
+    // static 関数を追加
+    ...staticFunctionsOrValues
+      .filter(([, v]) => typeof v === "function")
+      .map(([name, value]) => {
+        const extended = prototypes
+          .slice(1)
+          .reverse()
+          .find((p) => p[name]);
+        if (extended)
+          return {
+            ...toFunctionData([name, value]),
+            isStatic: true,
+            extendedBy: extended.constructor.name,
+            isMember: true,
+          };
+        return {
+          ...toFunctionData([name, value]),
+          isStatic: true,
+          extendedBy: prototypes[0].constructor.name,
+          isMember: true,
+          isReadable: true,
+        };
+      }),
+  ];
   /**
    * 代入値から型を推測する関数
    * @param {string[]} fnNames 検索先の関数名
@@ -128,17 +168,13 @@ window.analyzeClass = (C, noCode = false) => {
       name,
       fnNames,
       predictedType: getPredictedType(fnNames, name),
+      isStatic: !!staticFunctionsOrValues
+        .filter(([, v]) => typeof v !== "function")
+        .find(([k]) => name === k),
     }));
-  // 継承リスト
-  let { prototype } = C;
-  let prototypes = [];
-  while (prototype) {
-    prototypes = [...prototypes, prototype || ""];
-    prototype = Object.getPrototypeOf(prototype);
-  }
-  // メンバ変数で検出した関数を継承された関数として functions に移動
   functions = [
     ...functions,
+    // メンバ変数で検出した関数を継承された関数として functions に移動
     ...members
       .filter((x) => x.predictedType.type === "function")
       .map((x) => {
@@ -146,15 +182,23 @@ window.analyzeClass = (C, noCode = false) => {
           .slice(1)
           .reverse()
           .find((p) => p[x.name]);
+        if (extended)
+          return {
+            ...toFunctionData([x.name, extended[x.name]]),
+            extendedBy: extended.constructor.name,
+            isMember: true,
+          };
         return {
-          ...toFunctionData([x.name, extended[x.name]]),
-          extendedBy: extended.constructor.name,
+          ...toFunctionData([x.name, "[dynamic function]"]),
+          extendedBy: prototypes[0].constructor.name,
           isMember: true,
+          isReadable: false,
         };
       }),
   ];
   // メンバ変数リストから関数を削除
   members = members.filter((x) => x.predictedType.type !== "function");
+  // コードを削除
   if (noCode) functions = functions.map(({ code, ...rest }) => rest);
   // 解析結果を出力
   return {
