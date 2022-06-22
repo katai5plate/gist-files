@@ -19,6 +19,9 @@
  *
  * アツマール上で使用する時は、コンソールを開いてください。
  *
+ * [ホワイトリストのメンバーか判別する]
+ * window.$analytics.isOwner();
+ *
  * [特定のイベントログを記録]
  * window.$analytics.setLog("FLGNM");
  *
@@ -29,6 +32,11 @@
  * window.$analytics.getLogs();
  *
  * これを制作者にしかわからないような所でのみ実行できるようにしてください。
+ * 絶対に誰にも見られたくない場合は次のように書くといいでしょう。
+ *
+ * if(window.$analytics.isOwner()){
+ *   window.$analytics.getLogs();
+ * }
  *
  * version: プラグインバージョン
  * userId: ユーザーID
