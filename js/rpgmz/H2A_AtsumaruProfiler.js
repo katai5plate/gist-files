@@ -60,7 +60,7 @@
  */
 (async () => {
   // プラグインのバージョン(必ず [0-9, 0-9, 0-9])
-  const VERSION = [1, 2, 1];
+  const VERSION = [1, 2, 2];
 
   const { _whiteList } = PluginManager.parameters(
     document.currentScript.src.match(/^.*\/(.*).js$/)[1]
