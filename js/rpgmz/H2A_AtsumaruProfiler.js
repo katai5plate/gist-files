@@ -28,24 +28,47 @@
  *
  * これを制作者にしかわからないような所でのみ実行できるようにしてください。
  *
+ * version: プラグインバージョン
+ * userId: ユーザーID
+ * userName: ユーザー名
+ * at: ログ日時
+ * flag: ログ識別子("#####" は入室時、 "#cmt#" はコメント時)
+ * isMobile: スマホかどうか
+ * isAndroidChrome: Android で Chrome を使っているかどうか
+ * isMobileSafari: iOS で Safari を使っているかどうか
+ * isPremium: プレミアム会員か
+ * usedMouse: ある程度マウスを使ったか
+ * usedKeyboard: ある程度キーボードを使ったか
+ * usedController: ある程度アツマールのコントローラーを使ったか
+ * allGift: このゲームへ課金した総額
+ * _gift: このタイミングで課金したギフト額
+ * _comment: このタイミングで発言したコメントの一部
+ *
  * ---
  * Copyright (c) 2022 Had2Apps
  * This software is released under the WTFPL License.
  */
 (async () => {
+  // プラグインのバージョン(必ず 1 桁 * 3)
+  const VERSION = [1, 1, 1];
+
   const { _whiteList } = PluginManager.parameters(
     document.currentScript.src.match(/^.*\/(.*).js$/)[1]
   );
-  const IGNORE_ID = JSON.parse(_whiteList ?? []).map(Number);
+  const IGNORE_ID = _whiteList ? JSON.parse(_whiteList).map(Number) : [];
 
   const zerone = (x) => (!!x ? 1 : 0);
   const gifpo = (x) => `${Math.floor(x / 100)}`.slice(0, 5);
+
   window.$analytics = {
     IGNORE_ID,
     state: {
       id: null,
       isPremium: null,
       giftTable: {},
+      touchCount: 0,
+      keyCount: 0,
+      padCount: 0,
     },
     getLogs() {
       console.log("loading...");
@@ -53,15 +76,19 @@
         console.log(
           "----- ACCESS LOGS -----",
           signals.map(({ senderId, senderName, data, createdAt }) => ({
+            version: [...(data.match(/ver(\d{3})/)?.[1] || "")].join("."),
             userId: senderId,
             userName: senderName,
             at: new Date(createdAt * 1000).toLocaleString(),
             flag: data.match(/^f(.*?)mobil/)?.[1],
             isMobile: /mobil1/.test(data),
-            isAndroidChrome: /mobil\dandch1/.test(data),
-            isMobileSafari: /mobil\dandch\diossf1/.test(data),
-            allGift:
-              (data.match(/mobil\dandch\diossf\dallgf(\d+)/)?.[1] ?? 0) * 100,
+            isAndroidChrome: /andch1/.test(data),
+            isMobileSafari: /iossf1/.test(data),
+            isPremium: /prmum1/.test(data),
+            usedMouse: /touch1/.test(data),
+            usedKeyboard: /keybd1/.test(data),
+            usedController: /agmpd1/.test(data),
+            allGift: (data.match(/allgf(\d+)/)?.[1] ?? 0) * 100,
             _gift: (data.match(/nowgf(\d+)/)?.[1] ?? 0) * 100,
             _comment: data.match(/cmmnt(.*?)$/)?.[1],
           })),
@@ -70,7 +97,7 @@
         );
       });
     },
-    async sendLog(flag = "#####", point = -1, comment = "") {
+    async sendLog(flag = "#####", point = 0, comment = "") {
       if (IGNORE_ID.includes(window.$analytics.state.id)) {
         console.log({ flag, point, comment });
         return;
@@ -89,6 +116,14 @@
               iossf: zerone(Utils.isMobileSafari()),
               // +6
               prmum: zerone(window.$analytics.state.isPremium),
+              // +6
+              touch: zerone(window.$analytics.state.touchCount > 100),
+              // +6
+              keybd: zerone(window.$analytics.state.keyCount > 100),
+              // +6
+              agmpd: zerone(!!window.$analytics.state.padCount),
+              // +6
+              ver: VERSION.join("").slice(0, 3),
               // +10
               allgf: gifpo(
                 Object.values(window.$analytics.state.giftTable || {}).reduce(
@@ -110,6 +145,24 @@
       }
     },
   };
+
+  const touchIsPressed = TouchInput.isPressed;
+  TouchInput.isPressed = function () {
+    const result = touchIsPressed.apply(this);
+    if (result) {
+      window.$analytics.state.touchCount++;
+    }
+    return result;
+  };
+  const keyIsPressed = Input.isPressed;
+  Input.isPressed = function () {
+    const result = keyIsPressed.apply(this, arguments);
+    if (result) {
+      window.$analytics.state.keyCount++;
+    }
+    return result;
+  };
+
   if (!!window.RPGAtsumaru) {
     try {
       const { id, isPremium } =
@@ -118,6 +171,9 @@
       window.$analytics.state.id = id;
       window.$analytics.state.isPremium = isPremium;
       window.$analytics.state.giftTable = giftTable;
+      window.RPGAtsumaru.controllers.defaultController.subscribe(() => {
+        window.$analytics.state.padCount++;
+      });
       if (IGNORE_ID.includes(id)) {
         console.log("WELCOME HOME, OWNER!");
         window.RPGAtsumaru.comment.verbose = true;
