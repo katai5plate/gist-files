@@ -32,7 +32,7 @@
  * userId: ユーザーID
  * userName: ユーザー名
  * at: ログ日時
- * flag: ログ識別子("#####" は入室時、 "#cmt#" はコメント時)
+ * flag: ログ識別子("#####" は入室時、 "#cmt#" はコメント時, "#err#" はエラー時)
  * isMobile: スマホかどうか
  * isAndroidChrome: Android で Chrome を使っているかどうか
  * isMobileSafari: iOS で Safari を使っているかどうか
@@ -49,8 +49,8 @@
  * This software is released under the WTFPL License.
  */
 (async () => {
-  // プラグインのバージョン(必ず 1 桁 * 3)
-  const VERSION = [1, 1, 1];
+  // プラグインのバージョン(必ず [0-9, 0-9, 0-9])
+  const VERSION = [1, 2, 1];
 
   const { _whiteList } = PluginManager.parameters(
     document.currentScript.src.match(/^.*\/(.*).js$/)[1]
@@ -69,6 +69,10 @@
       touchCount: 0,
       keyCount: 0,
       padCount: 0,
+      isOwner: false,
+    },
+    isOwner() {
+      return window.$analytics.state.isOwner;
     },
     getLogs() {
       console.log("loading...");
@@ -162,6 +166,16 @@
     }
     return result;
   };
+  const onError = SceneManager.onError;
+  SceneManager.onError = function (event) {
+    window.$analytics.sendLog(
+      "#err#",
+      0,
+      event.message.split(":").slice(-1)?.[0]?.replaceAll(" ", "") ??
+        event.message
+    );
+    onError.apply(this, arguments);
+  };
 
   if (!!window.RPGAtsumaru) {
     try {
@@ -176,6 +190,7 @@
       });
       if (IGNORE_ID.includes(id)) {
         console.log("WELCOME HOME, OWNER!");
+        window.$analytics.state.isOwner = true;
         window.RPGAtsumaru.comment.verbose = true;
         window.RPGAtsumaru.comment.cameOut.subscribe((comments) => {
           console.log(
