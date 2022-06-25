@@ -54,13 +54,32 @@
  * _gift: このタイミングで課金したギフト額
  * _comment: このタイミングで発言したコメントの一部
  *
+ * [コメントのコンテキストIDを設定]
+ * window.$analytics.setCommentContext("コンテキスト名")
+ * window.$analytics.setCommentContextWithVariable("コンテキスト名", 変数ID)
+ * // 条件分岐用に短縮したもの
+ * window.$analytics.setCC("コンテキスト名")
+ * window.$analytics.setCCV("コンテキスト名", 変数ID)
+ *
+ * 返り値にtrueが返るので、条件分岐で区間設定することも可能
+ *
+ * ◆条件分岐：スクリプト：$analytics.setCCV("コンテキスト名")
+ *   ◆画面のフェードイン
+ *   ◆ウェイト：60フレーム
+ *   ◆画面のフェードアウト
+ *   ◆
+ * ：分岐終了
+ *
+ * [既知の問題]
+ * - たまにコメントが取得できない時がある
+ *
  * ---
  * Copyright (c) 2022 Had2Apps
  * This software is released under the WTFPL License.
  */
 (async () => {
   // プラグインのバージョン(必ず [0-9, 0-9, 0-9])
-  const VERSION = [1, 2, 2];
+  const VERSION = [1, 3, 0];
 
   const { _whiteList } = PluginManager.parameters(
     document.currentScript.src.match(/^.*\/(.*).js$/)[1]
@@ -116,8 +135,9 @@
         console.log({ flag, point, comment });
         return;
       }
+      console.debug({ flag });
       try {
-        await window.RPGAtsumaru.signal.sendSignalToGlobal(
+        await window.RPGAtsumaru?.signal.sendSignalToGlobal(
           `${
             Object.entries({
               // +6
@@ -157,6 +177,22 @@
       } catch (error) {
         console.warn(error);
       }
+    },
+    setCommentContext(name) {
+      window.RPGAtsumaru?.comment.setContext(name);
+      return true;
+    },
+    setCC(name) {
+      return window.$analytics.setCommentContext(name);
+    },
+    setCommentContextWithVariable(name, variableId) {
+      window.RPGAtsumaru?.comment.setContext(
+        name + "_" + $gameVariables.value(variableId)
+      );
+      return true;
+    },
+    setCCV(name, variableId) {
+      return window.$analytics.setCommentContextWithVariable(name, variableId);
     },
   };
 
