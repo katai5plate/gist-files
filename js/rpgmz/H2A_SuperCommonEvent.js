@@ -33,10 +33,6 @@
  *   @arg condition
  *     @text 実行条件(JS)
  *
- * @command updateMapEvents
- * @text マップイベント更新
- * @desc 「マップイベントページ初期設定」を即座に反映させます。
- *
  * @help
  * コモンイベントの機能を強化します。
  *
@@ -59,22 +55,17 @@
  * ただし、プラグインコマンド「コモンイベントを呼ぶ」が呼ばれるたびに、値が上書きされてしまうため、
  * 受け取ったらすぐ変数に格納するなどしてください。
  *
- * ・（上級）マップイベントのページの出現条件をスクリプトで設定できるようにする
+ * ・マップイベントのページの出現条件をスクリプトで設定できるようにする
  *
  * 「最初」のイベントコマンドに、
  * プラグインコマンド「マップイベントページ初期設定」を設定してください。
  * 設定すると「出現条件」がすべて無効になります。
- * ツクールの仕様上常時監視ではないため、変数やスイッチなどが更新されない限り、
- * 条件が反映されることはありません。
- *
- * そのため、決まったタイミングに即座に反映させたい場合は、
- * プラグインコマンド「マップイベント更新」を実行してください。
  *
  *
  * Copyright (c) 2023 Had2Apps
  * This software is released under the MIT License.
  *
- * Version: v1.2.0
+ * Version: v1.3.0
  * RPG Maker MZ Version: v1.6.1
  */
 (() => {
@@ -104,9 +95,11 @@
   Game_Interpreter.prototype.getArg = () => execArgState;
 
   // マップイベント更新
-  PluginManager.registerCommand(PLUGIN_NAME, "updateMapEvents", () => {
-    $gameMap.requestRefresh();
-  });
+  const _Game_Map_prototype_update = Game_Map.prototype.update;
+  Game_Map.prototype.update = function (sceneActive) {
+    if (sceneActive) $gameMap.requestRefresh();
+    _Game_Map_prototype_update.apply(this, arguments);
+  };
 
   /** 設定付きコモンイベントか判定し、有効ならデータを返す */
   const isSuperCommonEvent = (commonEvent) => {
