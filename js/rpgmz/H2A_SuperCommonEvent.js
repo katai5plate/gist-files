@@ -29,7 +29,7 @@
  *
  * @command defineMapEventPage
  * @text マップイベントページ初期設定
- * @desc マップイベントのページの発火条件を「コモンイベント初期設定」と同様に設定できます。
+ * @desc マップイベントのページの出現条件を「コモンイベント初期設定」と同様に設定できます。
  *   @arg condition
  *     @text 実行条件(JS)
  *
@@ -65,7 +65,7 @@
  * Copyright (c) 2023 Had2Apps
  * This software is released under the MIT License.
  *
- * Version: v1.1.1
+ * Version: v1.1.2
  * RPG Maker MZ Version: v1.6.1
  */
 (() => {
