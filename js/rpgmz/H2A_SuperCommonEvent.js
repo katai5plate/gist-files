@@ -15,16 +15,23 @@
  *     @default {}
  *     @desc 呼び出し先で this.getArg() で読むことができます。呼ぶ度に上書きされるため、値を変数などに退避するなどしてください　。
  *
- * @command define
+ * @command defineCommonEvent
  * @text コモンイベント初期設定
  * @desc これをコモンイベントの最初に設定することで発火条件を設定できます。
  *   @arg condition
  *     @text 実行条件(JS)
  *   @arg isParallel
  *     @text 並列実行か
+ *     @default false
  *     @type boolean
  *       @on 並列実行
  *       @off 自動実行
+ *
+ * @command defineMapEventPage
+ * @text マップイベントページ初期設定
+ * @desc マップイベントのページの発火条件を「コモンイベント初期設定」と同様に設定できます。
+ *   @arg condition
+ *     @text 実行条件(JS)
  *
  * @help
  * コモンイベントの機能を強化します。
@@ -48,11 +55,16 @@
  * ただし、プラグインコマンド「コモンイベントを呼ぶ」が呼ばれるたびに、値が上書きされてしまうため、
  * 受け取ったらすぐ変数に格納するなどしてください。
  *
+ * ・マップイベントのページの発火条件をスクリプトで設定できるようにする
+ *
+ * 「最初」のイベントコマンドに、
+ * プラグインコマンド「マップイベントページ初期設定」を設定してください。
+ *
  *
  * Copyright (c) 2023 Had2Apps
  * This software is released under the MIT License.
  *
- * Version: dev
+ * Version: v1.0.1
  * RPG Maker MZ Version: v1.6.1
  */
 (() => {
@@ -86,7 +98,10 @@
     const { parameters } = commonEvent?.list?.[0] ?? {};
     if (parameters?.length) {
       const [pluginName, commandName, _, args] = parameters;
-      if (pluginName?.match?.(PLUGIN_NAME) && commandName === "define") {
+      if (
+        pluginName?.match?.(PLUGIN_NAME) &&
+        ["defineCommonEvent", "defineMapEventPage"].includes(commandName)
+      ) {
         const { condition, isParallel } = args;
         return {
           /** コモンイベントの生データ */
@@ -141,6 +156,7 @@
     );
   };
 
+  // 通常の呼び出しに警告を出す
   const _Game_Interpreter_prototype_command117 =
     Game_Interpreter.prototype.command117;
   Game_Interpreter.prototype.command117 = function () {
@@ -148,5 +164,15 @@
       "コモンイベントを ID 指定しています！並べ替え等ができなくなるため、使用を避けてください。"
     );
     return _Game_Interpreter_prototype_command117.apply(this, arguments);
+  };
+
+  // ページの発火条件設定（マップイベントページ初期設定）
+  const _Game_Event_prototype_meetsConditions =
+    Game_Event.prototype.meetsConditions;
+  Game_Event.prototype.meetsConditions = function (page) {
+    const superEvent = isSuperCommonEvent(page);
+    return superEvent
+      ? superEvent?.on()
+      : _Game_Event_prototype_meetsConditions.apply(this, arguments);
   };
 })();
