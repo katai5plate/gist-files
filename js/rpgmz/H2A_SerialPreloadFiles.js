@@ -30,7 +30,7 @@
   PluginManager.registerCommand(pluginName, "preload", function ({ $files }) {
     const LABEL = "preload";
     const IMAGE_EXT = ".png";
-    const RETRY_MS = 100;
+    const RETRY_MS = 1000 / 60;
 
     const files = JSON.parse($files).map((f) => parsePath(f));
     const loadedAudioPathList = [];
