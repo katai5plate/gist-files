@@ -2,6 +2,7 @@
  * @target MZ
  * @plugindesc 直列プリロード
  * @author Had2Apps
+ * @url https://had2apps.com/
  *
  * @command preload
  * @text 直列プリロード
@@ -27,12 +28,16 @@
   };
 
   PluginManager.registerCommand(pluginName, "preload", function ({ $files }) {
-    const files = JSON.parse($files).map((f) => parsePath(f));
-    this._waitCount = Number.MAX_SAFE_INTEGER;
     const LABEL = "preload";
     const IMAGE_EXT = ".png";
+    const RETRY_MS = 100;
 
+    const files = JSON.parse($files).map((f) => parsePath(f));
     const loadedAudioPathList = [];
+
+    this._waitCount = Number.MAX_SAFE_INTEGER;
+
+    console.time(LABEL);
 
     files.forEach(({ base, folder, name, path }) => {
       if (base === "img") {
@@ -48,7 +53,6 @@
       throw new Error("プリロード未対応のファイル形式: " + base);
     });
 
-    console.time(LABEL);
     const i = setInterval(() => {
       const isReady = files.reduce((_, { base, path }) => {
         if (base === "img") {
@@ -63,6 +67,6 @@
         console.timeEnd(LABEL);
         clearInterval(i);
       }
-    }, 100);
+    }, RETRY_MS);
   });
 })();
