@@ -10,7 +10,7 @@
  * 例えば、
  * 名前欄「Chikuwa#1,"two",{"three": 3}」
  * メモ欄「console.log($1, $2, $3)」
- * のように入力すると、「$eventExcutor.do(this);」のタイミングで
+ * のように入力すると、「$eventExecutor.do(this);」のタイミングで
  * 「console.log(1, "two", {"three": 3})」が実行される。
  * （「#」の左側にある「Chikuwa」の部分はコメントとして処理されるので、「#」以外なら何を書いてもいい）
  *
@@ -21,7 +21,7 @@
   const patch = (txt, arr) =>
     txt.replace(/\$(\d+)/g, (_, index) => arr[parseInt(index) - 1] ?? "");
 
-  globalThis.$eventExcutor = {
+  globalThis.$eventExecutor = {
     do: (interpreter) => {
       if (!(interpreter instanceof Game_Interpreter) || !interpreter?._eventId)
         throw new Error("不正な this が指定された");
