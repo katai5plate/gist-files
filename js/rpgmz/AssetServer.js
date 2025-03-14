@@ -33,7 +33,7 @@
  * 2. .htaccess で以下のように設定する
  * <IfModule mod_headers.c>
  *   SetEnvIfNoCase Origin "https?://(www\.)?(ここに許可したいドメインの正規表現)$" AccessControlAllowOrigin=$0
- *   Header set Access-Control-Allow-Origin %{AccessControlAllowOrigin}e env=AccessControlAllowOrigin
+ *   Header set Access-Control-Allow-Origin %{AccessControlAllowOrigin} env=AccessControlAllowOrigin
  * </IfModule>
  *
  * ## (おまけ) ファイル検索APIを実装する方法
