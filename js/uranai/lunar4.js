@@ -1,11 +1,34 @@
-// 四柱計算
+// 四柱計算＋節月式梅花心易時間運判定
+//
 // localClockToUTC({
 //   year, month, day, hour, minute, second,
-//   longitudeCorrectionMinutes=明石市との時差,
+//   offset=明石市との時差,
 // }, {
 //   applyJapanHistoricalDST=サマータイム自動考慮(true),
 //   historicalDstOverride=サマータイム強制適用(null/false/true),
 // })
+//
+// const offset = XX;
+// const birth = {
+//   year: XXXX,
+//   month: XX,
+//   day: XX,
+//   hour: XX,
+//   minute: XX,
+//   offset,
+// };
+// const today = {
+//   year: XXXX,
+//   month: XX,
+//   day: XX,
+//   hour: XX,
+//   minute: XX,
+//   offset,
+// };
+// const { fourPillars, destiny } = calculateDestiny(birth);
+// console.log(fourPillars.text);
+// console.log(calculateLuck(today, destiny.body.element));
+// console.log(generateDayHours(today, destiny.body.element));
 
 // 日本標準時の時差分数
 const UTC_OFFSET_MINUTES = 540;
@@ -241,14 +264,14 @@ const localClockToUTC = (input, options = {}) => {
 // 占術上の地方時 (時計表示->サマータイムなら-1時間->地方時補正)
 const getAstrologicalLocalTime = (input, options = {}) => {
   const normalized = normalizeHistoricalClock(input, options);
-  const longitudeCorrectionMinutes = input.longitudeCorrectionMinutes ?? 0;
+  const offset = input.offset ?? 0;
   const corrected = new Date(
     Date.UTC(
       normalized.year,
       normalized.month - 1,
       normalized.day,
       normalized.hour,
-      normalized.minute + longitudeCorrectionMinutes,
+      normalized.minute + offset,
       normalized.second,
     ),
   );
@@ -261,7 +284,7 @@ const getAstrologicalLocalTime = (input, options = {}) => {
     second: corrected.getUTCSeconds(),
     dstApplied: normalized.dstApplied,
     dstMinutes: normalized.dstMinutes,
-    longitudeCorrectionMinutes,
+    offset,
   };
 };
 
@@ -382,3 +405,288 @@ export function calculateFourPillars(input, options = {}) {
       `${hour.text}時`,
   };
 }
+
+// ============================================================
+
+const SKY_NUMBER = {
+  甲: 1,
+  乙: 2,
+  丙: 3,
+  丁: 4,
+  戊: 5,
+  己: 6,
+  庚: 7,
+  辛: 8,
+  壬: 9,
+  癸: 10,
+};
+const GROUND_NUMBER = {
+  子: 1,
+  丑: 2,
+  寅: 3,
+  卯: 4,
+  辰: 5,
+  巳: 6,
+  午: 7,
+  未: 8,
+  申: 9,
+  酉: 10,
+  戌: 11,
+  亥: 12,
+};
+
+// 八卦
+const TRIGRAM = {
+  1: {
+    number: 1,
+    name: "乾",
+    element: "金",
+    mark: "☰",
+  },
+  2: {
+    number: 2,
+    name: "兌",
+    element: "金",
+    mark: "☱",
+  },
+  3: {
+    number: 3,
+    name: "離",
+    element: "火",
+    mark: "☲",
+  },
+  4: {
+    number: 4,
+    name: "震",
+    element: "木",
+    mark: "☳",
+  },
+  5: {
+    number: 5,
+    name: "巽",
+    element: "木",
+    mark: "☴",
+  },
+  6: {
+    number: 6,
+    name: "坎",
+    element: "水",
+    mark: "☵",
+  },
+  7: {
+    number: 7,
+    name: "艮",
+    element: "土",
+    mark: "☶",
+  },
+  8: {
+    number: 8,
+    name: "坤",
+    element: "土",
+    mark: "☷",
+  },
+};
+
+// 相生
+const GENERATES = {
+  木: "火",
+  火: "土",
+  土: "金",
+  金: "水",
+  水: "木",
+};
+// 相剋
+const CONTROLS = {
+  木: "土",
+  土: "水",
+  水: "火",
+  火: "金",
+  金: "木",
+};
+
+// 数値 -> 八卦
+const numberToTrigram = (n) => {
+  let value = mod(n, 8);
+  if (value === 0) value = 8;
+  return TRIGRAM[value];
+};
+
+// 命卦計算
+// 四柱の天干合計 -> 上卦
+// 四柱の地支合計 -> 下卦
+// 天干合計+地支合計 -> 動爻
+const calculateDestinyHexagram = (fourPillars) => {
+  const pillars = [
+    fourPillars.year,
+    fourPillars.month,
+    fourPillars.day,
+    fourPillars.hour,
+  ];
+  const skyTotal = pillars.reduce(
+    (sum, pillar) => sum + SKY_NUMBER[pillar.sky],
+    0,
+  );
+  const groundTotal = pillars.reduce(
+    (sum, pillar) => sum + GROUND_NUMBER[pillar.ground],
+    0,
+  );
+  const upper = numberToTrigram(skyTotal);
+  const lower = numberToTrigram(groundTotal);
+  let movingLine = mod(skyTotal + groundTotal, 6);
+  if (movingLine === 0) movingLine = 6;
+  // 初～三爻が動く -> 下卦が用、上卦が体
+  // 四～上爻が動く -> 上卦が用、下卦が体
+  const upperMoves = movingLine >= 4;
+  const body = upperMoves ? lower : upper;
+  const use = upperMoves ? upper : lower;
+  return {
+    skyTotal,
+    groundTotal,
+    upper,
+    lower,
+    movingLine,
+    movingPart: upperMoves ? "上卦" : "下卦",
+    body,
+    use,
+  };
+};
+
+// 生年月日時 -> 四柱 -> 命卦
+export function calculateDestiny(input, options = {}) {
+  const fourPillars = calculateFourPillars(input, options);
+  const destiny = calculateDestinyHexagram(fourPillars);
+  return { fourPillars, destiny };
+}
+
+// 五行関係判定
+// bodyElement = 本人の体卦五行
+// targetElement = 年支・月支・日支・時支の五行
+export function getLuckRelation(bodyElement, targetElement) {
+  // 比和
+  if (bodyElement === targetElement)
+    return {
+      code: "比和",
+      score: 1,
+      kido: "旺",
+      season: "相",
+      life: "青",
+      element: "金",
+      meaning: "調和・同調・安定",
+    };
+  // 用が体を生む
+  if (GENERATES[targetElement] === bodyElement)
+    return {
+      code: "加護",
+      score: 2,
+      kido: "廟",
+      season: "旺",
+      life: "成",
+      element: "土",
+      meaning: "補給・援助・回復",
+    };
+  // 体が用を剋す
+  if (CONTROLS[bodyElement] === targetElement)
+    return {
+      code: "制剋",
+      score: -1,
+      kido: "弱",
+      season: "囚",
+      life: "童",
+      element: "水",
+      meaning: "制御・獲得・成果",
+    };
+  // 体が用を生む
+  if (GENERATES[bodyElement] === targetElement)
+    return {
+      code: "発洩",
+      score: 0,
+      kido: "利",
+      season: "休",
+      life: "親",
+      element: "火",
+      meaning: "出力・消耗",
+    };
+  // 用が体を剋す
+  if (CONTROLS[targetElement] === bodyElement)
+    return {
+      code: "受剋",
+      score: -2,
+      kido: "陥",
+      season: "死",
+      life: "老",
+      element: "木",
+      meaning: "圧力・障害",
+    };
+  throw new Error("五行関係判定に失敗しました");
+}
+
+// 柱 -> 運勢判定
+const pillarToLuck = (pillar, bodyElement) => {
+  const element = ELEMENT[pillar.ground];
+  return {
+    pillar: pillar.text,
+    sky: pillar.sky,
+    ground: pillar.ground,
+    element,
+    gc: getLuckRelation(bodyElement, element),
+  };
+};
+
+// 年月日時運判定
+export const calculateLuck = (input, dbe, options = {}) => {
+  const fourPillars = calculateFourPillars(input, options);
+  return {
+    fourPillars,
+    year: pillarToLuck(fourPillars.year, dbe),
+    month: pillarToLuck(fourPillars.month, dbe),
+    day: pillarToLuck(fourPillars.day, dbe),
+    hour: pillarToLuck(fourPillars.hour, dbe),
+  };
+};
+
+// 一日分の十二時辰運
+export const generateDayHours = (
+  { year, month, day, offset },
+  dbe,
+  { applyJapanHistoricalDST = true, historicalDstOverride = null } = {},
+) => {
+  const hours = [
+    0, // 子
+    2, // 丑
+    4, // 寅
+    6, // 卯
+    8, // 辰
+    10, // 巳
+    12, // 午
+    14, // 未
+    16, // 申
+    18, // 酉
+    20, // 戌
+    22, // 亥
+  ];
+  return hours.map((hour) => {
+    const luck = calculateLuck(
+      {
+        year,
+        month,
+        day,
+        hour,
+        minute: 0,
+        second: 0,
+        offset,
+      },
+      dbe,
+      {
+        applyJapanHistoricalDST,
+        historicalDstOverride,
+      },
+    );
+    return {
+      hour,
+      pillar: luck.hour.pillar,
+      ground: luck.hour.ground,
+      element: luck.hour.element,
+      gc: luck.hour.gc,
+    };
+  });
+};
