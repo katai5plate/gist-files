@@ -3,8 +3,8 @@
 //   year, month, day, hour, minute, second,
 //   longitudeCorrectionMinutes=明石市との時差,
 // }, {
-//   applyJapanHistoricalDST=サマータイム自動考慮(true)
-//   historicalDstOverride=サマータイム強制適用(null/false/true)
+//   applyJapanHistoricalDST=サマータイム自動考慮(true),
+//   historicalDstOverride=サマータイム強制適用(null/false/true),
 // })
 
 // 日本標準時の時差分数
@@ -98,7 +98,7 @@ const solarLongitude = (jd) => {
   return normalizeDegrees(longitude);
 };
 // 太陽黄経 -> 月建 (立春315°を寅月開始点＝0とする)
-const solarLongitudeToMonthBranch = (longitude) => {
+const solarLongitudeToMonthGround = (longitude) => {
   const offset = normalizeDegrees(longitude - 315);
   const index = Math.floor(offset / 30);
   return SOLAR_MONTH_GROUND[index];
@@ -277,27 +277,27 @@ const getPillarYear = (y, m, solarLon) => {
 const getYearPillar = (localDate, solarLon) => {
   const pillarYear = getPillarYear(localDate.year, localDate.month, solarLon);
   const stemIndex = mod(pillarYear - 4, 10);
-  const branchIndex = mod(pillarYear - 4, 12);
+  const groundIndex = mod(pillarYear - 4, 12);
   return {
     pillarYear,
     stemIndex,
-    branchIndex,
+    groundIndex,
     sky: SKY[stemIndex],
-    ground: GROUND[branchIndex],
-    text: SKY[stemIndex] + GROUND[branchIndex],
+    ground: GROUND[groundIndex],
+    text: SKY[stemIndex] + GROUND[groundIndex],
   };
 };
 
 // 月柱計算
 const getMonthPillar = (yp, solarLon) => {
-  const ground = solarLongitudeToMonthBranch(solarLon);
+  const ground = solarLongitudeToMonthGround(solarLon);
   const monthOffset = SOLAR_MONTH_GROUND.indexOf(ground);
   // 五虎遁
   const tigerStartStem = mod(yp.stemIndex * 2 + 2, 10);
   const stemIndex = mod(tigerStartStem + monthOffset, 10);
   return {
     stemIndex,
-    branchIndex: GROUND.indexOf(ground),
+    groundIndex: GROUND.indexOf(ground),
     sky: SKY[stemIndex],
     ground,
     solarLongitude: solarLon,
@@ -310,36 +310,36 @@ const getDayPillar = (y, m, d) => {
   const jdn = gregorianToJDN(y, m, d);
   const cycleIndex = mod(jdn + 49, 60);
   const stemIndex = cycleIndex % 10;
-  const branchIndex = cycleIndex % 12;
+  const groundIndex = cycleIndex % 12;
   return {
     jdn,
     cycleIndex,
     stemIndex,
-    branchIndex,
+    groundIndex,
     sky: SKY[stemIndex],
-    ground: GROUND[branchIndex],
-    text: SKY[stemIndex] + GROUND[branchIndex],
+    ground: GROUND[groundIndex],
+    text: SKY[stemIndex] + GROUND[groundIndex],
   };
 };
 
 // 時支
-const getHourBranchIndex = (h, m = 0, s = 0) => {
+const getHourgroundIndex = (h, m = 0, s = 0) => {
   const decimal = h + m / 60 + s / 3600;
   return Math.floor(mod(decimal + 1, 24) / 2);
 };
 
 // 時柱計算
 const getHourPillar = (dp, h, m = 0, s = 0) => {
-  const branchIndex = getHourBranchIndex(h, m, s);
+  const groundIndex = getHourgroundIndex(h, m, s);
   // 五鼠遁
   const ratStartStem = (dp.stemIndex % 5) * 2;
-  const stemIndex = mod(ratStartStem + branchIndex, 10);
+  const stemIndex = mod(ratStartStem + groundIndex, 10);
   return {
     stemIndex,
-    branchIndex,
+    groundIndex,
     sky: SKY[stemIndex],
-    ground: GROUND[branchIndex],
-    text: SKY[stemIndex] + GROUND[branchIndex],
+    ground: GROUND[groundIndex],
+    text: SKY[stemIndex] + GROUND[groundIndex],
   };
 };
 
