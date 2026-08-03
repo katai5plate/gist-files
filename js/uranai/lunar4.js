@@ -366,11 +366,19 @@ const getHourPillar = (dp, h, m = 0, s = 0) => {
   };
 };
 
+// 陰陽令
+export const getYinYangSeason = (solarLongitude) => {
+  const lon = normalizeDegrees(solarLongitude);
+  if (lon >= 270 || lon < 90) return "陽令";
+  return "陰令";
+};
+
 // 四柱計算
 export function calculateFourPillars(input, options = {}) {
   const physicalTime = localClockToUTC(input, options);
   const actualJD = dateToJD(physicalTime.date);
   const solarLon = solarLongitude(actualJD);
+  const yinYangSeason = getYinYangSeason(solarLon);
   const astrologicalTime = getAstrologicalLocalTime(input, options);
   const year = getYearPillar(astrologicalTime, solarLon);
   const month = getMonthPillar(year, solarLon);
@@ -389,6 +397,7 @@ export function calculateFourPillars(input, options = {}) {
     physicalUTC: physicalTime.date,
     actualJD,
     solarLongitude: solarLon,
+    yinYangSeason,
     astrologicalLocalTime: astrologicalTime,
     daylightSaving: {
       applied: astrologicalTime.dstApplied,
