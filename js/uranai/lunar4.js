@@ -21,6 +21,17 @@
 // - 日柱は地方時補正後の暦日を用い、日界は00:00。
 // - 時支は子=23:00-00:59, 丑=01:00-02:59 ... とする。
 // - 太陽黄経はUSNOの近似式を使用。
+//
+// 霊数用：三霊数 / 六霊数
+// Usage:
+//   const today = lunar4(...);
+//   ton3(today);
+//   ton6(
+//     身宮干支,
+//     命宮干支,
+//     大限干支,
+//     today
+//   );
 
 const SKY = [..."甲乙丙丁戊己庚辛壬癸"];
 const GROUND = [..."子丑寅卯辰巳午未申酉戌亥"];
@@ -357,3 +368,243 @@ const lunar4 = (
     longitude,
   };
 };
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+// ============================================================
+// 霊数
+// ============================================================
+
+const REISU = {
+  甲: 3,
+  乙: 4,
+  丙: 5,
+  丁: 6,
+  戊: 7,
+  己: 8,
+  庚: 9,
+  辛: 0,
+  壬: 1,
+  癸: 2,
+};
+
+// ============================================================
+// 入力チェック
+// ============================================================
+
+const assertStem = (stem, name = "天干") => {
+  if (!SKY.includes(stem)) {
+    throw new TypeError(`${name} must be one of ${SKY.join("")}`);
+  }
+};
+const assertBranch = (branch, name = "地支") => {
+  if (!GROUND.includes(branch)) {
+    throw new TypeError(`${name} must be one of ${GROUND.join("")}`);
+  }
+};
+const assertPillar = (pillar, name) => {
+  if (!Array.isArray(pillar) || pillar.length < 2) {
+    throw new TypeError(`${name} must be [天干, 地支]`);
+  }
+  assertStem(pillar[0], `${name}[0]`);
+  assertBranch(pillar[1], `${name}[1]`);
+};
+const assertLunar4 = (today) => {
+  if (!today || typeof today !== "object") {
+    throw new TypeError("today must be the result of lunar4()");
+  }
+  assertPillar(today.year, "today.year");
+  assertPillar(today.month, "today.month");
+  assertPillar(today.day, "today.day");
+  assertPillar(today.time, "today.time");
+};
+
+// ============================================================
+// 干支文字列
+// ============================================================
+
+const parseGanzhi = (value, name) => {
+  if (typeof value !== "string") {
+    throw new TypeError(`${name} must be a 干支 string such as "甲子"`);
+  }
+  const text = value.trim();
+  const chars = Array.from(text);
+  if (chars.length !== 2) {
+    throw new TypeError(
+      `${name} must be a two-character 干支 string such as "甲子"`,
+    );
+  }
+  const [stem, branch] = chars;
+  assertStem(stem, `${name}の天干`);
+  assertBranch(branch, `${name}の地支`);
+  return [stem, branch];
+};
+
+// ============================================================
+// 五合グループ
+// ============================================================
+// 甲己 = 0
+// 乙庚 = 1
+// 丙辛 = 2
+// 丁壬 = 3
+// 戊癸 = 4
+
+const stemGroup = (stem) => {
+  assertStem(stem);
+  return SKY.indexOf(stem) % 5;
+};
+
+// ============================================================
+// 汎用五遁
+// ============================================================
+// startBranch:
+//   子 -> 五鼠遁, 丑 -> 五牛遁, 寅 -> 五虎遁
+//   卯 -> 五兔遁, 辰 -> 五龍遁, 巳 -> 五蛇遁
+//   午 -> 五馬遁, 未 -> 五羊遁, 申 -> 五猴遁
+//   酉 -> 五雞遁, 戌 -> 五狗遁, 亥 -> 五猪遁
+// stem: 起干を決定する基準天干
+// targetBranch: 求めたい地支
+const tonStem = (startBranch, stem, targetBranch) => {
+  assertBranch(startBranch, "起点支");
+  assertStem(stem, "基準天干");
+  assertBranch(targetBranch, "対象支");
+  const startBranchIndex = GROUND.indexOf(startBranch);
+  const targetBranchIndex = GROUND.indexOf(targetBranch);
+  const group = stemGroup(stem);
+
+  // ----------------------------------------------------------
+  // 起干
+  // ----------------------------------------------------------
+  // 起干表：
+  //       甲己 乙庚 丙辛 丁壬 戊癸
+  // 子     甲   丙   戊   庚   壬
+  // 丑     乙   丁   己   辛   癸
+  // 寅     丙   戊   庚   壬   甲
+  // ...
+  const startStemIndex = mod(
+    startBranchIndex + group * 2,
+    10,
+  );
+
+  // ----------------------------------------------------------
+  // 起点支 → 対象支
+  // ----------------------------------------------------------
+  // 十二支を順行する距離。
+  // 例: 丑 → 申
+  // 丑 寅 卯 辰 巳 午 未 申
+  // 0  1  2  3  4  5  6  7
+  // distance = 7
+  const distance = mod(
+    targetBranchIndex - startBranchIndex,
+    12,
+  );
+
+  // 地支が一つ進むたび、天干も一つ進める。
+  const stemIndex = mod(
+    startStemIndex + distance,
+    10,
+  );
+
+  return SKY[stemIndex];
+};
+
+// ============================================================
+// 天干 → 霊数
+// ============================================================
+
+const reisu = (stem) => {
+  assertStem(stem);
+  return REISU[stem];
+};
+
+// ============================================================
+// ton3
+// ============================================================
+// 月: 年干 + 月支 = 五鼠遁
+// 日: 月干 + 日支 = 五牛遁
+// 時: 日干 + 時支 = 五虎遁
+// return:
+// {
+//   month: [月干, 鼠干, 月干霊数, 鼠干霊数],
+//   day: [日干, 牛干, 日干霊数, 牛干霊数],
+//   time: [時干, 虎干, 時干霊数, 虎干霊数],
+// }
+
+const ton3 = (today) => {
+  assertLunar4(today);
+  const yearStem = today.year[0];
+  const monthStem = today.month[0];
+  const monthBranch = today.month[1];
+  const dayStem = today.day[0];
+  const dayBranch = today.day[1];
+  const timeStem = today.time[0];
+  const timeBranch = today.time[1];
+
+  // 五鼠遁: 年干 + 月支
+  const mouseStem = tonStem("子", yearStem, monthBranch);
+  // 五牛遁: 月干 + 日支
+  const cowStem = tonStem("丑", monthStem, dayBranch);
+  // 五虎遁: 日干 + 時支
+  const tigerStem = tonStem("寅", dayStem, timeBranch);
+  return {
+    month: [monthStem, mouseStem, reisu(monthStem), reisu(mouseStem)],
+    day: [dayStem, cowStem, reisu(dayStem), reisu(cowStem)],
+    time: [timeStem, tigerStem, reisu(timeStem), reisu(tigerStem)],
+  };
+}
+
+// ============================================================
+// ton6
+// ============================================================
+// 命: 身宮干 + 命宮支 = 五雞遁
+// 大: 命宮干 + 大限支 = 五狗遁
+// 年: 大限干 + 年支 = 五猪遁
+
+const ton6 = (
+  bodyPalaceGanzhi,
+  soulPalaceGanzhi,
+  bigLimitGanzhi,
+  today,
+) => {
+  assertLunar4(today);
+  // 身宮
+  const [bodyStem] = parseGanzhi(bodyPalaceGanzhi, "身宮干支");
+  // 命宮
+  const [soulStem, soulBranch] = parseGanzhi(soulPalaceGanzhi, "命宮干支");
+  // 大限
+  const [bigStem, bigBranch] = parseGanzhi(bigLimitGanzhi, "大限干支");
+  // 年柱
+  const yearStem = today.year[0];
+  const yearBranch = today.year[1];
+
+  // ----------------------------------------------------------
+  // 五雞遁
+  // 身宮干 + 命宮支
+  // ----------------------------------------------------------
+  const chickenStem = tonStem("酉", bodyStem, soulBranch);
+
+  // ----------------------------------------------------------
+  // 五狗遁
+  // 命宮干 + 大限支
+  // ----------------------------------------------------------
+  const dogStem = tonStem("戌", soulStem, bigBranch);
+
+  // ----------------------------------------------------------
+  // 五猪遁
+  // 大限干 + 年支
+  // ----------------------------------------------------------
+  const pigStem = tonStem("亥", bigStem, yearBranch);
+
+  // 月・日・時は ton3 と全く同じ処理なので再利用する。
+  const three = ton3(today);
+
+  return {
+    soul: [soulStem, chickenStem, reisu(soulStem), reisu(chickenStem)],
+    big: [bigStem, dogStem, reisu(bigStem), reisu(dogStem)],
+    year: [yearStem, pigStem, reisu(yearStem), reisu(pigStem)],
+    month: three.month,
+    day: three.day,
+    time: three.time,
+  };
+}
