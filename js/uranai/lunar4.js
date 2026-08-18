@@ -1,6 +1,5 @@
 // 四柱 + 十二節気/二十四節気 + 季節区分
 // Usage:
-//   import { lunar4 } from "./lunar4.js";
 //   const today = new Date();
 //   const offsetMinute = +16;
 //   const japaneseSummerTime = true;
