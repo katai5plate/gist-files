@@ -2,7 +2,6 @@
  * @target MZ
  * @plugindesc MIDIファイルをBGMとして再生します。
  * @author Had2Apps
- * @url https://github.com/katai5plate/RPGMakerPlugins
  *
  * @param fileExtension
  * @text MIDI拡張子
@@ -157,6 +156,9 @@
  * MIDI生成音量はPicoAudioの合成音量です。通常のBGM／ME音量とは別に調整します。
  * 和音の多いMIDIで値を上げすぎると、音割れが起こることがあります。
  *
+ * このプラグインの開発には、Codex AI が使用されています。
+ * Copyright (c) 2026 Had2Apps
+ * This software is released under the WTFPL License.
  */
 
 /*~struct~MidiBgm:
