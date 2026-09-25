@@ -26,7 +26,6 @@ const NINES = [
     ground: { light: "子", dark: "亥" },
     eight: { name: "坎", mark: "☵" },
     compass: { nature: "西", action: "北" },
-    mean: "新規、拡縮、人縁、精力",
   },
   {
     id: 2,
@@ -35,7 +34,6 @@ const NINES = [
     ground: { light: "辰戌", dark: "丑未" },
     eight: { name: "坤", mark: "☷" },
     compass: { nature: "北", action: "南西" },
-    mean: "勤労、援助、土地、受継",
   },
   {
     id: 3,
@@ -44,7 +42,6 @@ const NINES = [
     ground: { light: "寅", dark: "卯" },
     eight: { name: "震", mark: "☳" },
     compass: { nature: "北東", action: "東" },
-    mean: "発展、口舌、地位、火力",
   },
   {
     id: 4,
@@ -53,7 +50,6 @@ const NINES = [
     ground: { light: "寅", dark: "卯" },
     eight: { name: "巽", mark: "☴" },
     compass: { nature: "南西", action: "南東" },
-    mean: "信用、取引、人情、円滑",
   },
   {
     id: 5,
@@ -62,7 +58,6 @@ const NINES = [
     ground: { light: "辰戌", dark: "丑未" },
     eight: { name: "", mark: "" },
     compass: { nature: "中央", action: "中央" },
-    mean: "消極、空亡、変質、衰弱",
   },
   {
     id: 6,
@@ -71,7 +66,6 @@ const NINES = [
     ground: { light: "申", dark: "酉" },
     eight: { name: "乾", mark: "☰" },
     compass: { nature: "南", action: "北西" },
-    mean: "発見、自信、勝負、統率",
   },
   {
     id: 7,
@@ -80,7 +74,6 @@ const NINES = [
     ground: { light: "申", dark: "酉" },
     eight: { name: "兌", mark: "☱" },
     compass: { nature: "南東", action: "西" },
-    mean: "経済、口舌、結合、刃物",
   },
   {
     id: 8,
@@ -89,7 +82,6 @@ const NINES = [
     ground: { light: "辰戌", dark: "丑未" },
     eight: { name: "艮", mark: "☶" },
     compass: { nature: "北西", action: "北東" },
-    mean: "変化、相続、財産、協調",
   },
   {
     id: 9,
@@ -98,7 +90,6 @@ const NINES = [
     ground: { light: "午", dark: "巳" },
     eight: { name: "離", mark: "☲" },
     compass: { nature: "東", action: "南" },
-    mean: "名誉、官禄、法律、決定",
   },
 ];
 
